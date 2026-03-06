@@ -1,53 +1,109 @@
 "use client"
 
-import { Shield } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 interface TrustScoreProps {
   score: number
+  sourcesCount?: number
   className?: string
 }
 
-export function TrustScore({ score, className }: TrustScoreProps) {
+export function TrustScore({ score, sourcesCount = 3, className }: TrustScoreProps) {
+  const [animatedScore, setAnimatedScore] = useState(0)
+  
+  // Animate the score on mount
+  useEffect(() => {
+    const duration = 1500
+    const startTime = Date.now()
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setAnimatedScore(Math.round(score * eased))
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+    
+    requestAnimationFrame(animate)
+  }, [score])
+
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600"
-    if (score >= 60) return "text-amber-600"
-    return "text-red-600"
+    if (score >= 80) return "#10b981" // bio-green
+    if (score >= 50) return "#f59e0b" // amber
+    return "#ef4444" // red
   }
 
-  const getProgressColor = (score: number) => {
-    if (score >= 80) return "[&>div]:bg-green-500"
-    if (score >= 60) return "[&>div]:bg-amber-500"
-    return "[&>div]:bg-red-500"
-  }
+  const color = getScoreColor(score)
+  
+  // SVG circle parameters
+  const size = 160
+  const strokeWidth = 8
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const progressOffset = circumference - (animatedScore / 100) * circumference
 
   return (
-    <Card className={cn("border-border/50 shadow-lg", className)}>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 font-heading text-xl">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/20">
-            <Shield className="h-4 w-4 text-accent-foreground" />
-          </div>
-          Confidence Score
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm text-muted-foreground">AI Confidence Level</span>
-          <span className={cn("font-heading text-3xl font-bold", getScoreColor(score))}>
-            {score}%
+    <div className={cn("glass rounded-2xl p-6", className)}>
+      <h3 className="mb-6 text-center font-heading text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        Confidence Score
+      </h3>
+      
+      <div className="relative mx-auto" style={{ width: size, height: size }}>
+        {/* Background circle */}
+        <svg className="absolute inset-0" width={size} height={size}>
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="rgba(255,255,255,0.06)"
+            strokeWidth={strokeWidth}
+          />
+        </svg>
+        
+        {/* Progress circle */}
+        <svg 
+          className="absolute inset-0 -rotate-90" 
+          width={size} 
+          height={size}
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={progressOffset}
+            className="transition-all duration-1000 ease-out"
+            style={{
+              filter: `drop-shadow(0 0 8px ${color}40)`,
+            }}
+          />
+        </svg>
+        
+        {/* Score text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span 
+            className="font-mono text-5xl font-bold"
+            style={{ color }}
+          >
+            {animatedScore}
           </span>
+          <span className="font-mono text-lg text-muted-foreground">%</span>
         </div>
-        <Progress 
-          value={score} 
-          className={cn("h-3 rounded-full bg-secondary", getProgressColor(score))} 
-        />
-        <p className="text-xs text-muted-foreground">
-          Based on the relevance of retrieved medical records
-        </p>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Based on {sourcesCount} retrieved sources
+      </p>
+    </div>
   )
 }

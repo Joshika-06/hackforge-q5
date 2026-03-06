@@ -2,84 +2,94 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Activity, Brain, Database, ShieldCheck, ArrowRight } from "lucide-react"
+import { ArrowRight, Database, Shield, Cpu, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/navbar"
 import { LanguageSelector } from "@/components/language-selector"
-
-const features = [
-  {
-    icon: Brain,
-    title: "AI-Powered Analysis",
-    description: "Advanced language models analyze your symptoms with medical knowledge",
-  },
-  {
-    icon: Database,
-    title: "RAG Technology",
-    description: "Retrieval-augmented generation for accurate, evidence-based insights",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Trust Scoring",
-    description: "Confidence metrics help you understand the reliability of results",
-  },
-]
 
 export default function HomePage() {
   const [language, setLanguage] = useState("en")
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
       
-      <main>
+      <main className="pt-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          {/* Background gradient */}
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" />
-            <div className="absolute right-0 top-1/2 h-[400px] w-[400px] -translate-y-1/2 translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+        <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center overflow-hidden px-4 py-20">
+          {/* Floating medical icon (subtle background) */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5">
+            <Activity className="h-[600px] w-[600px] text-[#00d4ff]" strokeWidth={0.5} />
           </div>
-
-          <div className="container mx-auto max-w-6xl px-4 py-20 md:py-32">
-            <div className="flex flex-col items-center text-center">
-              {/* Language Selector */}
-              <div className="mb-8">
-                <LanguageSelector value={language} onValueChange={setLanguage} />
-              </div>
-
-              {/* Icon */}
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
-                <Activity className="h-8 w-8 text-primary-foreground" />
-              </div>
-
-              {/* Title */}
-              <h1 className="mb-4 font-heading text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
-                <span className="text-balance">AI Healthcare Assistant</span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="mb-8 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-                Analyze your symptoms using advanced AI and medical knowledge retrieval. 
-                Get evidence-based insights powered by state-of-the-art RAG technology.
-              </p>
-
-              {/* CTA Button */}
-              <Link href="/diagnosis">
-                <Button 
-                  size="lg" 
-                  className="gap-2 rounded-xl px-8 py-6 text-lg font-medium shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
-                >
-                  Start Diagnosis
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
+          
+          {/* Status badge */}
+          <div className="animate-fade-up mb-8 flex items-center gap-2 rounded-full bg-secondary px-4 py-2">
+            <span className="pulse-glow h-2 w-2 rounded-full bg-[#10b981]" />
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              System Online
+            </span>
+          </div>
+          
+          {/* Main title */}
+          <h1 className="animate-fade-up mb-4 text-center font-heading text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl">
+            AI Healthcare
+            <br />
+            <span className="text-gradient">Assistant</span>
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="animate-fade-up mb-10 max-w-xl text-center text-lg text-muted-foreground" style={{ animationDelay: '100ms' }}>
+            Symptom analysis powered by retrieval-augmented medical intelligence
+          </p>
+          
+          {/* CTA buttons */}
+          <div className="animate-fade-up mb-8 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: '200ms' }}>
+            <Link href="/diagnosis">
+              <Button 
+                size="lg" 
+                className="gap-2 rounded-full bg-gradient-to-r from-[#00d4ff] to-[#06b6d4] px-8 font-heading font-semibold text-[#0a0f1e] shadow-[0_0_30px_rgba(0,212,255,0.3)] transition-all hover:shadow-[0_0_40px_rgba(0,212,255,0.5)]"
+              >
+                Start Diagnosis
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/about">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="rounded-full border-border px-8 font-heading font-semibold text-foreground hover:bg-secondary"
+              >
+                Learn How It Works
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Language selector */}
+          <div className="animate-fade-up" style={{ animationDelay: '300ms' }}>
+            <LanguageSelector value={language} onValueChange={setLanguage} />
+          </div>
+          
+          {/* Stats bar */}
+          <div className="animate-fade-up mt-16 flex flex-wrap items-center justify-center gap-6 text-center md:gap-12" style={{ animationDelay: '400ms' }}>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-2xl font-bold text-[#00d4ff]">47,293</span>
+              <span className="text-sm text-muted-foreground">diagnoses analyzed</span>
+            </div>
+            <div className="hidden h-4 w-px bg-border sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-2xl font-bold text-[#10b981]">94.2%</span>
+              <span className="text-sm text-muted-foreground">accuracy</span>
+            </div>
+            <div className="hidden h-4 w-px bg-border sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-2xl font-bold text-[#06b6d4]">12</span>
+              <span className="text-sm text-muted-foreground">medical databases</span>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="border-t border-border/40 bg-secondary/30 py-20">
+        <section className="border-t border-border py-20">
           <div className="container mx-auto max-w-6xl px-4">
             <div className="mb-12 text-center">
               <h2 className="mb-3 font-heading text-2xl font-bold text-foreground md:text-3xl">
@@ -91,13 +101,29 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-              {features.map((feature, index) => (
+              {[
+                {
+                  icon: Cpu,
+                  title: "AI-Powered Analysis",
+                  description: "Advanced language models analyze your symptoms with medical knowledge",
+                },
+                {
+                  icon: Database,
+                  title: "RAG Technology",
+                  description: "Retrieval-augmented generation for accurate, evidence-based insights",
+                },
+                {
+                  icon: Shield,
+                  title: "Trust Scoring",
+                  description: "Confidence metrics help you understand the reliability of results",
+                },
+              ].map((feature, index) => (
                 <div
                   key={index}
-                  className="group rounded-2xl border border-border/50 bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
+                  className="glass glass-hover group rounded-2xl p-6 transition-all"
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                    <feature.icon className="h-6 w-6 text-primary" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#00d4ff]/10 transition-colors group-hover:bg-[#00d4ff]/20">
+                    <feature.icon className="h-6 w-6 text-[#00d4ff]" />
                   </div>
                   <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">
                     {feature.title}
@@ -112,7 +138,7 @@ export default function HomePage() {
         </section>
 
         {/* Disclaimer */}
-        <section className="border-t border-border/40 py-12">
+        <section className="border-t border-border py-12">
           <div className="container mx-auto max-w-6xl px-4 text-center">
             <p className="text-sm text-muted-foreground">
               This AI assistant is for informational purposes only and does not replace professional medical advice.

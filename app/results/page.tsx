@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, RefreshCw, Search } from "lucide-react"
 import { Navbar } from "@/components/navbar"
@@ -10,34 +9,26 @@ import { TrustScore } from "@/components/trust-score"
 import { EvidenceList } from "@/components/evidence-list"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { getDiagnosisResult, type QueryResponse } from "@/lib/api"
 
 export default function ResultsPage() {
-  const router = useRouter()
   const [result, setResult] = useState<QueryResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Get the result using the helper function
     const storedResult = getDiagnosisResult()
-    
     if (storedResult) {
       setResult(storedResult)
     }
-    
     setIsLoading(false)
   }, [])
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Navbar />
-        <main className="container mx-auto flex max-w-4xl items-center justify-center px-4 py-20">
-          <div className="text-center">
-            <LoadingSpinner size="lg" className="mb-4" />
-            <p className="text-muted-foreground">Loading results...</p>
-          </div>
+        <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center pt-16">
+          <LoadingSpinner size="lg" text="Retrieving medical knowledge..." />
         </main>
       </div>
     )
@@ -45,10 +36,10 @@ export default function ResultsPage() {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Navbar />
-        <main className="container mx-auto flex max-w-4xl items-center justify-center px-4 py-20">
-          <div className="text-center">
+        <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 pt-16">
+          <div className="glass animate-fade-up rounded-2xl p-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
               <Search className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -59,7 +50,7 @@ export default function ResultsPage() {
               Please start a new diagnosis to see results.
             </p>
             <Link href="/diagnosis">
-              <Button className="gap-2">
+              <Button className="gap-2 bg-[#00d4ff] text-[#0a0f1e] hover:bg-[#00d4ff]/90">
                 <RefreshCw className="h-4 w-4" />
                 Start New Diagnosis
               </Button>
@@ -71,33 +62,33 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
       
-      <main className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
+      <main className="container mx-auto max-w-6xl px-4 pb-20 pt-24">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="animate-fade-up mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="mb-2 font-heading text-2xl font-bold tracking-tight text-foreground md:text-3xl">
               Analysis Results
             </h1>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Query:</span>
-              <Badge variant="secondary" className="font-normal">
+              <span className="rounded-full bg-secondary px-3 py-1 text-sm text-foreground">
                 {result.query}
-              </Badge>
+              </span>
             </div>
           </div>
           
           <div className="flex gap-3">
             <Link href="/diagnosis">
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 border-border hover:bg-secondary">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
             <Link href="/diagnosis">
-              <Button size="sm" className="gap-2">
+              <Button size="sm" className="gap-2 bg-[#00d4ff] text-[#0a0f1e] hover:bg-[#00d4ff]/90">
                 <RefreshCw className="h-4 w-4" />
                 New Analysis
               </Button>
@@ -105,26 +96,29 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        {/* Results Grid */}
+        {/* Results Dashboard - 3 column on desktop */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Result - spans 2 columns on large screens */}
-          <div className="lg:col-span-2">
+          {/* AI Diagnosis Card - spans 2 columns */}
+          <div className="animate-fade-up lg:col-span-2" style={{ animationDelay: '100ms' }}>
             <ResultCard answer={result.answer} />
           </div>
 
-          {/* Trust Score */}
-          <div className="lg:col-span-1">
-            <TrustScore score={result.trust_score} />
+          {/* Trust Score - 1 column */}
+          <div className="animate-fade-up lg:col-span-1" style={{ animationDelay: '200ms' }}>
+            <TrustScore 
+              score={result.trust_score} 
+              sourcesCount={result.sources?.length || 3}
+            />
           </div>
 
           {/* Evidence List - full width */}
-          <div className="lg:col-span-3">
+          <div className="animate-fade-up lg:col-span-3" style={{ animationDelay: '300ms' }}>
             <EvidenceList sources={result.sources} />
           </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-8 rounded-xl border border-border/50 bg-secondary/30 p-4 text-center text-sm text-muted-foreground">
+        <div className="animate-fade-up mt-8 rounded-xl border border-border bg-secondary/30 p-4 text-center text-sm text-muted-foreground" style={{ animationDelay: '400ms' }}>
           This analysis is for informational purposes only and should not replace professional medical advice.
           Please consult a healthcare provider for proper diagnosis and treatment.
         </div>
