@@ -2,27 +2,23 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, Lightbulb } from "lucide-react"
+import { AlertCircle, Lightbulb, FileText, ClipboardList } from "lucide-react"
 import { Navbar } from "@/components/navbar"
-import { QueryInput } from "@/components/query-input"
+import { SymptomForm } from "@/components/symptom-form"
+import { DocumentUpload } from "@/components/document-upload"
 import { LanguageSelector } from "@/components/language-selector"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { analyzeSymptoms, storeDiagnosisResult, type QueryResponse } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
-const exampleSymptoms = [
-  "Dizziness + Insomnia",
-  "Chest pain + Fatigue",
-  "Fever + Cough",
-  "Headache + Nausea",
-]
+type TabType = "symptoms" | "upload"
 
 export default function DiagnosisPage() {
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState<TabType>("symptoms")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [language, setLanguage] = useState("en")
-  const [selectedExample, setSelectedExample] = useState<string | null>(null)
 
   const handleSubmit = async (query: string) => {
     setIsLoading(true)
@@ -41,11 +37,6 @@ export default function DiagnosisPage() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleExampleClick = (example: string) => {
-    setSelectedExample(example)
-    // The QueryInput will be updated via the selected example
   }
 
   return (
@@ -71,49 +62,49 @@ export default function DiagnosisPage() {
                   <Lightbulb className="h-4 w-4 text-[#00d4ff]" />
                 </div>
                 <h2 className="font-heading text-lg font-semibold text-foreground">
-                  How to describe symptoms
+                  {activeTab === "symptoms" ? "Tips for accurate results" : "Document guidelines"}
                 </h2>
               </div>
               
-              <ul className="mb-6 space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
-                  Be specific about your symptoms and their duration
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
-                  Mention any relevant medical history
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
-                  Include information about when symptoms started
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
-                  Describe severity on a scale if possible
-                </li>
-              </ul>
-              
-              <div className="mb-4">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Example queries
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {exampleSymptoms.map((example) => (
-                    <button
-                      key={example}
-                      onClick={() => handleExampleClick(example)}
-                      className={cn(
-                        "rounded-full px-3 py-1.5 text-xs font-medium transition-all",
-                        "border border-border hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 hover:text-[#00d4ff]",
-                        selectedExample === example && "border-[#00d4ff] bg-[#00d4ff]/10 text-[#00d4ff]"
-                      )}
-                    >
-                      {example}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {activeTab === "symptoms" ? (
+                <ul className="mb-6 space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Add multiple symptoms for a more comprehensive analysis
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Be accurate about severity — it affects the diagnosis
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Include how long you&apos;ve had each symptom
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Add medical history in the context field
+                  </li>
+                </ul>
+              ) : (
+                <ul className="mb-6 space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Upload clear, readable documents
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Supported formats: PDF, JPG, PNG
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Works best with lab reports and prescriptions
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#00d4ff]" />
+                    Maximum file size: 10MB
+                  </li>
+                </ul>
+              )}
               
               <div className="border-t border-border pt-4">
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -131,16 +122,57 @@ export default function DiagnosisPage() {
                 Symptom Analysis
               </h1>
               <p className="text-muted-foreground">
-                Describe your symptoms in detail for a more accurate analysis
+                Describe your symptoms or upload a medical document
               </p>
             </div>
             
+            {/* Tab Toggle */}
+            <div className="mb-6 inline-flex rounded-xl bg-secondary/50 p-1">
+              <button
+                onClick={() => setActiveTab("symptoms")}
+                className={cn(
+                  "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
+                  activeTab === "symptoms"
+                    ? "bg-[#00d4ff] text-[#0a0f1e] shadow-[0_0_20px_rgba(0,212,255,0.3)]"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <ClipboardList className="h-4 w-4" />
+                Describe Symptoms
+              </button>
+              <button
+                onClick={() => setActiveTab("upload")}
+                className={cn(
+                  "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
+                  activeTab === "upload"
+                    ? "bg-[#00d4ff] text-[#0a0f1e] shadow-[0_0_20px_rgba(0,212,255,0.3)]"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <FileText className="h-4 w-4" />
+                Upload Medical Document
+              </button>
+            </div>
+            
+            {/* Tab Content */}
             <div className="glass rounded-2xl p-6 md:p-8">
-              <QueryInput 
-                onSubmit={handleSubmit} 
-                isLoading={isLoading} 
-                defaultValue={selectedExample || ""}
-              />
+              <div 
+                className={cn(
+                  "transition-opacity duration-300",
+                  activeTab === "symptoms" ? "opacity-100" : "hidden opacity-0"
+                )}
+              >
+                <SymptomForm onSubmit={handleSubmit} isLoading={isLoading} />
+              </div>
+              
+              <div 
+                className={cn(
+                  "transition-opacity duration-300",
+                  activeTab === "upload" ? "opacity-100" : "hidden opacity-0"
+                )}
+              >
+                <DocumentUpload onSubmit={handleSubmit} isLoading={isLoading} />
+              </div>
             </div>
           </div>
         </div>
