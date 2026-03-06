@@ -6,7 +6,7 @@ import { Stethoscope, AlertCircle } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { QueryInput } from "@/components/query-input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { analyzeSymptoms, type QueryResponse } from "@/lib/api"
+import { analyzeSymptoms, storeDiagnosisResult, type QueryResponse } from "@/lib/api"
 
 export default function DiagnosisPage() {
   const router = useRouter()
@@ -20,8 +20,8 @@ export default function DiagnosisPage() {
     try {
       const response: QueryResponse = await analyzeSymptoms(query)
       
-      // Store the response in sessionStorage to pass to results page
-      sessionStorage.setItem("diagnosisResult", JSON.stringify(response))
+      // Store the response using the helper function
+      storeDiagnosisResult(response)
       
       router.push("/results")
     } catch (err) {

@@ -11,7 +11,7 @@ import { EvidenceList } from "@/components/evidence-list"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import type { QueryResponse } from "@/lib/api"
+import { getDiagnosisResult, type QueryResponse } from "@/lib/api"
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -19,15 +19,11 @@ export default function ResultsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Try to get the result from sessionStorage
-    const storedResult = sessionStorage.getItem("diagnosisResult")
+    // Get the result using the helper function
+    const storedResult = getDiagnosisResult()
     
     if (storedResult) {
-      try {
-        setResult(JSON.parse(storedResult))
-      } catch (e) {
-        console.error("[v0] Failed to parse stored result:", e)
-      }
+      setResult(storedResult)
     }
     
     setIsLoading(false)
