@@ -1,21 +1,26 @@
 import type { Metadata } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const inter = Inter({ 
+const syne = Syne({ 
   subsets: ["latin"],
-  variable: "--font-sans"
+  variable: "--font-syne"
 });
 
-const spaceGrotesk = Space_Grotesk({ 
+const dmSans = DM_Sans({ 
   subsets: ["latin"],
-  variable: "--font-heading"
+  variable: "--font-dm-sans"
+});
+
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ["latin"],
+  variable: "--font-jetbrains"
 });
 
 export const metadata: Metadata = {
-  title: 'AI Healthcare Assistant',
-  description: 'Analyze symptoms using AI-powered medical knowledge retrieval',
+  title: 'MedRAG | AI Healthcare Assistant',
+  description: 'Symptom analysis powered by retrieval-augmented medical intelligence',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -36,14 +41,19 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport = {
+  themeColor: '#0a0f1e',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+    <html lang="en" className="dark">
+      <body className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <div className="mesh-gradient" aria-hidden="true" />
         {children}
         <Analytics />
       </body>
