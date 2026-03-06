@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowLeft, RefreshCw, Search } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { ResultCard } from "@/components/result-card"
-import { TrustScore } from "@/components/trust-score"
+import { AnalogGauge } from "@/components/analog-gauge"
 import { EvidenceList } from "@/components/evidence-list"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
@@ -74,7 +74,7 @@ export default function ResultsPage() {
             </h1>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Query:</span>
-              <span className="rounded-full bg-secondary px-3 py-1 text-sm text-foreground">
+              <span className="max-w-md truncate rounded-full bg-secondary px-3 py-1 text-sm text-foreground">
                 {result.query}
               </span>
             </div>
@@ -103,9 +103,9 @@ export default function ResultsPage() {
             <ResultCard answer={result.answer} />
           </div>
 
-          {/* Trust Score - 1 column */}
+          {/* Analog Gauge - 1 column */}
           <div className="animate-fade-up lg:col-span-1" style={{ animationDelay: '200ms' }}>
-            <TrustScore 
+            <AnalogGauge 
               score={result.trust_score} 
               sourcesCount={result.sources?.length || 3}
             />
